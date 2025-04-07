@@ -2,6 +2,14 @@
 
 이 프로젝트는 .NET Blazor WebAssembly를 사용하여 개발된 간단한 사칙연산 계산기 웹 애플리케이션입니다. 사용자는 두 숫자에 대해 더하기, 빼기, 곱하기, 나누기 연산을 수행할 수 있습니다.
 
+## 기술 스택
+
+- **프론트엔드**: Blazor WebAssembly (.NET 9.0)
+- **UI 프레임워크**: Bootstrap 5
+- **테스트 프레임워크**: xUnit
+- **CI/CD**: GitHub Actions
+- **호스팅**: GitHub Pages
+
 ## 기능
 
 - 두 개의 숫자 입력 필드
@@ -13,22 +21,41 @@
 ## 프로젝트 구조
 
 ```
-CalculatorApp/
-├── _Imports.razor           # Razor 임포트 설정
-├── App.razor                # 애플리케이션 루트 컴포넌트
-├── CalculatorApp.csproj     # 프로젝트 파일
-├── Program.cs               # 애플리케이션 진입점
-├── Layout/                  # 레이아웃 컴포넌트
-│   ├── MainLayout.razor     # 메인 레이아웃
-│   ├── NavMenu.razor        # 네비게이션 메뉴
-├── Pages/                   # 페이지 컴포넌트
-│   ├── Calculator.razor     # 계산기 구현
-│   └── Home.razor           # 홈 페이지
-└── wwwroot/                 # 정적 파일
-    ├── css/                 # CSS 스타일시트
-    │   └── app.css          # 애플리케이션 스타일
-    ├── index.html           # 메인 HTML 페이지
-    └── ...                  # 기타 정적 자원
+/
+├── README.md               # 프로젝트 문서
+├── .github/                # GitHub 설정 파일
+│   └── workflows/          # GitHub Actions 워크플로우
+│       └── deploy-to-github-pages.yml  # 배포 워크플로우
+├── src/                    # 소스 코드
+│   ├── CalculatorApp.slnx  # 솔루션 파일
+│   ├── CalculatorApp/      # 주 애플리케이션 프로젝트
+│   │   ├── _Imports.razor  # Razor 임포트 설정
+│   │   ├── App.razor       # 애플리케이션 루트 컴포넌트
+│   │   ├── Program.cs      # 애플리케이션 진입점
+│   │   ├── Layout/         # 레이아웃 컴포넌트
+│   │   ├── Pages/          # 페이지 컴포넌트
+│   │   ├── Services/       # 서비스 클래스
+│   │   └── wwwroot/        # 정적 파일
+│   └── CalculatorApp.Tests/ # 테스트 프로젝트
+│       └── CalculatorServiceTests.cs  # 계산기 서비스 테스트
+```
+
+## 아키텍처
+
+이 프로젝트는 다음과 같은 아키텍처 원칙과 패턴을 따릅니다:
+
+1. **계층 분리**: UI 컴포넌트(Pages)와 비즈니스 로직(Services)을 분리하여 관심사 분리 원칙을 구현합니다.
+
+2. **의존성 주입**: 서비스 클래스는 Program.cs에서 DI 컨테이너에 등록되어 컴포넌트에서 주입받아 사용합니다.
+
+3. **컴포넌트 기반 UI**: Blazor의 컴포넌트 모델을 활용하여 재사용 가능한 UI 요소를 구현합니다.
+
+4. **서비스 추상화**: 핵심 비즈니스 로직은 서비스 클래스로 추상화하여 테스트 용이성을 높입니다.
+
+### 데이터 흐름
+
+```
+User Input → Razor Component → Service → Calculation → UI Update
 ```
 
 ## 시작하기
@@ -54,6 +81,24 @@ CalculatorApp/
    또는 Visual Studio에서 프로젝트를 열고 F5 키를 눌러 디버그 모드로 실행하거나, Ctrl+F5를 눌러 디버그 없이 실행할 수 있습니다.
 
 3. 웹 브라우저에서 `https://localhost:5001` 또는 `http://localhost:5000`으로 접속합니다.
+
+## 테스트 전략
+
+이 프로젝트는 다음과 같은 테스트 방식을 채택하고 있습니다:
+
+1. **단위 테스트**: 서비스 클래스의 기능을 검증하는 단위 테스트를 xUnit 프레임워크로 구현했습니다.
+
+2. **테스트 케이스**: 
+   - 기본 연산 테스트: 각 사칙연산의 기본 기능 검증
+   - 특수 케이스 테스트: 0으로 나누기와 같은 예외 상황 처리 검증
+   - 다양한 입력값 테스트: 다양한 숫자 조합에 대한 연산 결과 검증
+
+테스트는 Visual Studio에서 Test Explorer를 통해 실행하거나 명령줄에서 다음 명령으로 실행할 수 있습니다:
+
+```bash
+cd src
+dotnet test
+```
 
 ## 주요 구성 요소
 

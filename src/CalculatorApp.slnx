@@ -1,0 +1,14 @@
+{
+  "Version": "1.0",
+  "WorkspaceRootPath": ".",
+  "Projects": [
+    {
+      "Path": "CalculatorApp\\CalculatorApp.csproj",
+      "Folder": null
+    },
+    {
+      "Path": "CalculatorApp.Tests\\CalculatorApp.Tests.csproj",
+      "Folder": null
+    }
+  ]
+}

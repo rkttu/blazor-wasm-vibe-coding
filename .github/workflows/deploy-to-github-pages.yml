@@ -1,0 +1,48 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Publish with dotnet
+        run: |
+          cd src/CalculatorApp
+          dotnet publish -c Release -o release --nologo
+
+      # GitHub Pages에 필요한 특수 파일 생성 - .nojekyll은 Jekyll 처리를 비활성화
+      - name: Add .nojekyll file
+        run: touch release/wwwroot/.nojekyll
+
+      # GitHub Pages에서 SPA 라우팅을 지원하기 위한 404.html 생성
+      - name: Add 404.html for SPA routing
+        run: cp release/wwwroot/index.html release/wwwroot/404.html
+
+      # index.html의 기본 경로 수정 (GitHub Pages의 하위 경로에 배포할 경우 필요)
+      - name: Change base path in index.html
+        run: |
+          cd release/wwwroot
+          # 리포지토리 이름을 기반으로 base 태그 수정
+          REPO_NAME="${GITHUB_REPOSITORY#*/}"
+          if [ "$REPO_NAME" != "username.github.io" ]; then
+            sed -i "s|<base href=\"/\" />|<base href=\"/$REPO_NAME/\" />|g" index.html
+            sed -i "s|<base href=\"/\" />|<base href=\"/$REPO_NAME/\" />|g" 404.html
+          fi
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: release/wwwroot
+          branch: gh-pages
+          clean: true
